@@ -1,1 +1,3 @@
 testPlot.py
+*.pyc
+*.DS_Store
