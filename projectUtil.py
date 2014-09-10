@@ -22,6 +22,7 @@ def extract_tree_data(direc="Data/Slashdot/slashdot_part_1"):
 
 def extractHTML(direcs=["Data/Slashdot/slashdot_part_1","Data/Slashdot/slashdot_part_1"]):
     from bs4 import BeautifulSoup
+    dicts = [];
     for direc in direcs:
         for datafile in os.listdir(direc):
             if(datafile == ".DS_Store"):
@@ -29,15 +30,38 @@ def extractHTML(direcs=["Data/Slashdot/slashdot_part_1","Data/Slashdot/slashdot_
             filepath = os.path.join(direc, datafile);
             soup = BeautifulSoup(open(filepath));
             print "Processing File:\t" + datafile;
-            for child in soup.recursiveChildGenerator():
-                name = getattr(child, "name", None)
-                if name is not None:
-                    print "Name not None"
-                    print name
-                elif not child.isspace(): # leaf node, don't print spaces
-                    print "childNotSpace"
-                    print child
-            break;
+            for el in soup.find_all("article"):
+                d = {};
+                d['title'] = el.find("title").contents[0];
+                d['author'] = el.find("author").contents[0];
+                d['datestamp'] = el.find("datestamp").contents[0];
+                # prefer sentencetext to htmltext
+                # but use htmltext if sentencetext does not exist
+                t = el.find("sentencetext");
+                if t is not None and len(t.contents) > 0:
+                    d['text'] = t.contents[0];
+                else:
+                    d['text'] = el.find("htmltext").contents[0];
+                d['type'] = "article"
+                dicts.append(d);
+            for el in soup.find_all("comment"):
+                #print el
+                d = {};
+                d['title'] = el.find("title").contents[0];
+                d['author'] = el.find("author").contents[0];
+                d['datestamp'] = el.find("datestamp").contents[0];
+                # prefer sentencetext to htmltext
+                # but use htmltext if sentencetext does not exist
+                t = el.find("sentencetext");
+                if t is not None and len(t.contents) > 0:
+                    d['text'] = t.contents[0];
+                else:
+                    d['text'] = el.find("htmltext").contents[0];
+                d['type'] = "comment"
+                dicts.append(d);
+    import pickle
+    pickle.dump(dicts, "Data/processedData.p")
+    return dicts                    
 
 def aggregateClassFrequency(folders=["Data/Slashdot/slashdot_part_1","Data/Slashdot/slashdot_part_1"]):
     theDict = {};
@@ -92,5 +116,4 @@ def mergeDicts(d1, d2):
 
 
 if __name__ == "__main__":
-    extractHTML();
-    
+    dicts = extractHTML();
