@@ -1,0 +1,154 @@
+\documentclass[a4paper,12pt]{article} 
+\usepackage{amsmath,amssymb, amsthm, mathrsfs, fancyhdr, ulem, gastex, gensymb, harmony, color, enumitem, bm, hyperref, extarrows, makeidx, rotating, wasysym}
+\usepackage[encapsulated]{CJK}
+\usepackage{ucs}
+\usepackage[utf8x]{inputenc}
+% use one of bsmi(trad Chinese), gbsn(simp Chinese), min(Japanese), mj(Korean); see:
+% /usr/share/texmf-dist/tex/latex/cjk/texinput/UTF8/*.fd
+\usepackage{tikz} 
+\usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,fit}  
+\newcommand\independent{\protect\mathpalette{\protect\independenT}{\perp}} 
+\def\independenT#1#2{\mathrel{\rlap{$#1#2$}\mkern2mu{#1#2}}} 
+
+
+\pdfpagewidth 8.5in
+\pdfpageheight 11in
+\setlength\topmargin{0in}
+\setlength\headheight{0in}
+\setlength\headsep{0in}
+\setlength\textheight{9.0in}
+\setlength\textwidth{6.5in}
+\setlength\oddsidemargin{0in}
+\setlength\evensidemargin{0in}
+\setlength\parindent{0.0in}
+\setlength\parskip{0.25in} 
+
+\pagestyle{fancy}
+\headheight 15pt
+\headsep 20pt
+
+\def\newop#1 
+{\expandafter\def\csname #1 
+\endcsname{\mathop{\rm #1}\nolimits}} 
+%Use as \newop{Blah}, then \Blah works. Similar to say, \dim, or \min, etcc
+
+\lhead[\thepage]{KK} 
+\rhead[KK]{\thepage} 	
+\chead{}
+\cfoot{}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{corollary}{Corollary}[section]
+\newtheorem{definition}{Definition}[section]
+\newtheorem{example}{Example}[section]
+\newtheorem{exercise}{Exercise}[section]
+\newtheorem{fact}{Fact}[section]
+\newtheorem{question}{Question}[section]
+\newtheorem{process}{Process}[section]
+\newtheorem{skill}{Skill}[section]
+\newtheorem{result}{Result}[section]
+\newtheorem{remark}{Remark}[section]
+\numberwithin{equation}{section}
+\newcommand{\cntext}[1]{\begin{CJK}{UTF8}{gbsn}#1\end{CJK}}
+
+\makeindex
+\begin{document} 
+
+zz
+\bibliographystyle{alpha}	
+\bibliography{database}  % expects file "database.bib"
+\end{document}
+
+
+
+mon3.2<-function(L,k)
+{
+
+  # Monahan 3.2
+  # An algorithm which solves for x in Lx = e_k
+
+  #First check for square matrix
+  if( nrow(L) != ncol(L))
+  {
+    stop('L is not a lower triangular matrix!')
+  }
+  
+  #and for lower triangularity
+  Lcheck = L
+  upper.tri(L,diag = FALSE)
+  Lcheck[upper.tri(L,diag = FALSE)] = 0  
+  if( identical(L,Lcheck) != 1)
+  {
+    stop('L is not a lower triangular matrix!')
+  }
+
+  #and when a_kk = 0
+  if( L[k,k] == 0)
+  {
+    stop('Unable to solve for x with this L!')
+  }
+  
+  #Good to go
+  
+  size = nrow(L)
+  xvec = mat.or.vec(size,1)
+  xvec = as.matrix(xvec)
+  xvec[k] = 1/L[k,k]
+  
+  if (k == size)
+  {    
+    return(xvec)
+  }
+    
+  for (i in (k+1):size)
+  {
+    
+    if ((L[i,i] == 0))
+    {
+      if (L[i,k:(i-1)] %*% xvec[k:(i-1)] != 0)
+      {
+        stop('Unable to solve for x with this L!')
+      }
+      else
+      {
+        xvec[i] = xvec[i-1]
+      }    
+    }
+    else
+    { 
+      sum = 0      
+      for (j in k:(i-1))
+      {
+        sum = sum - L[i,j]*xvec[j]
+      }    
+      xvec[i] = sum/L[i,i]
+    }
+  }
+  return(xvec)
+}
+
+
+
+    #initial beta - normal least squares (or weighted with weights = 1)
+    beta = solve(t(x)%*%x)%*%t(x) %*%y
+    loglik = vector("numeric")
+    #Run iterations
+    for (i in 1:niter) 
+    {
+        mu = family$bprime(  x %*% beta  )
+        W = diag(family$b2prime( as.vector(x %*% beta)))
+        beta = beta + solve( t(x) %*% W %*% x  ) %*% t(x) %*% ( y - mu)
+        loglik[i] =  sum(((x %*% beta)*y - family$b(x%*%beta ))
+        /family$a(phi) + family$c(y,phi))
+    }
+output<-list(beta = beta, fitted = x %*% beta, loglik = loglik, 
+family = family)
+return(output)
+
+
+
+
+
+

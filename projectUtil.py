@@ -74,4 +74,4 @@ def mergeDicts(d1, d2):
 
 
 if __name__ == "__main__":
-    main();
+    extract_tree_data()
