@@ -8,7 +8,6 @@ except ImportError:
     import xml.etree.ElementTree as ET
 import re
 import operator
-import BeautifulSoup
 
 def extract_tree_data(direc="Data/Slashdot/slashdot_part_1"):
     for datafile in os.listdir(direc):
@@ -22,12 +21,13 @@ def extract_tree_data(direc="Data/Slashdot/slashdot_part_1"):
         break;
 
 def extractHTML(direcs=["Data/Slashdot/slashdot_part_1","Data/Slashdot/slashdot_part_1"]):
+    from bs4 import BeautifulSoup
     for direc in direcs:
         for datafile in os.listdir(direc):
             if(datafile == ".DS_Store"):
                 continue;
             filepath = os.path.join(direc, datafile);
-            soup = BeautifulSoup(open("filepath"));
+            soup = BeautifulSoup(open(filepath));
             print(soup.prettify())
             break;
 
