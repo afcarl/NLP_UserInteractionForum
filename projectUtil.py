@@ -28,7 +28,15 @@ def extractHTML(direcs=["Data/Slashdot/slashdot_part_1","Data/Slashdot/slashdot_
                 continue;
             filepath = os.path.join(direc, datafile);
             soup = BeautifulSoup(open(filepath));
-            print(soup.prettify())
+            print "Processing File:\t" + datafile;
+            for child in soup.recursiveChildGenerator():
+                name = getattr(child, "name", None)
+                if name is not None:
+                    print "Name not None"
+                    print name
+                elif not child.isspace(): # leaf node, don't print spaces
+                    print "childNotSpace"
+                    print child
             break;
 
 def aggregateClassFrequency(folders=["Data/Slashdot/slashdot_part_1","Data/Slashdot/slashdot_part_1"]):
@@ -85,3 +93,4 @@ def mergeDicts(d1, d2):
 
 if __name__ == "__main__":
     extractHTML();
+    

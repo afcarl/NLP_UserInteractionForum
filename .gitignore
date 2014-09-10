@@ -7,3 +7,4 @@ testPlot.py
 *.log
 *.out
 *.synctex.gz
+temp/*
