@@ -8,6 +8,7 @@ except ImportError:
     import xml.etree.ElementTree as ET
 import re
 import operator
+import BeautifulSoup
 
 def extract_tree_data(direc="Data/Slashdot/slashdot_part_1"):
     for datafile in os.listdir(direc):
@@ -20,6 +21,15 @@ def extract_tree_data(direc="Data/Slashdot/slashdot_part_1"):
         # take a look at the structure later
         break;
 
+def extractHTML(direcs=["Data/Slashdot/slashdot_part_1","Data/Slashdot/slashdot_part_1"]):
+    for direc in direcs:
+        for datafile in os.listdir(direc):
+            if(datafile == ".DS_Store"):
+                continue;
+            filepath = os.path.join(direc, datafile);
+            soup = BeautifulSoup(open("filepath"));
+            print(soup.prettify())
+            break;
 
 def aggregateClassFrequency(folders=["Data/Slashdot/slashdot_part_1","Data/Slashdot/slashdot_part_1"]):
     theDict = {};
@@ -74,4 +84,4 @@ def mergeDicts(d1, d2):
 
 
 if __name__ == "__main__":
-    main();
+    extractHTML();
