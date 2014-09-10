@@ -2,3 +2,8 @@ testPlot.py
 *.pyc
 *.DS_Store
 /Data/*
+*.aux
+*.idx
+*.log
+*.out
+*.synctex.gz
