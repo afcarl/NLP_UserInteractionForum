@@ -32,8 +32,8 @@
 \endcsname{\mathop{\rm #1}\nolimits}} 
 %Use as \newop{Blah}, then \Blah works. Similar to say, \dim, or \min, etcc
 
-\lhead[\thepage]{KK} 
-\rhead[KK]{\thepage} 	
+\lhead[A1 Report \thepage]{Ben Athiwaratkun and Keegan Kang} 
+\rhead[Ben Athiwaratkun and Keegan Kang]{A1 Report \thepage} 	
 \chead{}
 \cfoot{}
 
@@ -56,96 +56,32 @@
 \makeindex
 \begin{document} 
 
-zz
+\subsubsection*{Introduction}
+
+\subsubsection*{Research problem}
+
+\subsubsection*{Proposed techniques}
+
+%include techniques from reading here
+
+\subsubsection*{Processing and selection of data}
+
+%meantime slashdot
+
+%python
+
+\subsubsection*{Preliminary results}
+
+
+\subsubsection*{What we learnt}
+
+\subsubsection*{Roles played}
+
+
 \bibliographystyle{alpha}	
 \bibliography{database}  % expects file "database.bib"
 \end{document}
 
-
-
-mon3.2<-function(L,k)
-{
-
-  # Monahan 3.2
-  # An algorithm which solves for x in Lx = e_k
-
-  #First check for square matrix
-  if( nrow(L) != ncol(L))
-  {
-    stop('L is not a lower triangular matrix!')
-  }
-  
-  #and for lower triangularity
-  Lcheck = L
-  upper.tri(L,diag = FALSE)
-  Lcheck[upper.tri(L,diag = FALSE)] = 0  
-  if( identical(L,Lcheck) != 1)
-  {
-    stop('L is not a lower triangular matrix!')
-  }
-
-  #and when a_kk = 0
-  if( L[k,k] == 0)
-  {
-    stop('Unable to solve for x with this L!')
-  }
-  
-  #Good to go
-  
-  size = nrow(L)
-  xvec = mat.or.vec(size,1)
-  xvec = as.matrix(xvec)
-  xvec[k] = 1/L[k,k]
-  
-  if (k == size)
-  {    
-    return(xvec)
-  }
-    
-  for (i in (k+1):size)
-  {
-    
-    if ((L[i,i] == 0))
-    {
-      if (L[i,k:(i-1)] %*% xvec[k:(i-1)] != 0)
-      {
-        stop('Unable to solve for x with this L!')
-      }
-      else
-      {
-        xvec[i] = xvec[i-1]
-      }    
-    }
-    else
-    { 
-      sum = 0      
-      for (j in k:(i-1))
-      {
-        sum = sum - L[i,j]*xvec[j]
-      }    
-      xvec[i] = sum/L[i,i]
-    }
-  }
-  return(xvec)
-}
-
-
-
-    #initial beta - normal least squares (or weighted with weights = 1)
-    beta = solve(t(x)%*%x)%*%t(x) %*%y
-    loglik = vector("numeric")
-    #Run iterations
-    for (i in 1:niter) 
-    {
-        mu = family$bprime(  x %*% beta  )
-        W = diag(family$b2prime( as.vector(x %*% beta)))
-        beta = beta + solve( t(x) %*% W %*% x  ) %*% t(x) %*% ( y - mu)
-        loglik[i] =  sum(((x %*% beta)*y - family$b(x%*%beta ))
-        /family$a(phi) + family$c(y,phi))
-    }
-output<-list(beta = beta, fitted = x %*% beta, loglik = loglik, 
-family = family)
-return(output)
 
 
 
