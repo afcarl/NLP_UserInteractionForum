@@ -84,8 +84,4 @@ def mergeDicts(d1, d2):
 
 
 if __name__ == "__main__":
-<<<<<<< HEAD
     extractHTML();
-=======
-    extract_tree_data()
->>>>>>> FETCH_HEAD
