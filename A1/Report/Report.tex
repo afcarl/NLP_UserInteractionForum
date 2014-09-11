@@ -58,24 +58,58 @@
 
 \subsubsection*{Introduction}
 
-%piazza
+Many goals in NLP focus on analyzing a chunk of text, and making some sort of prediction or identification from it. In the CS742 course, we were given two articles \cite{dejareview} and \cite{anae} to read, and come up with interesting research proposals. 
+
+\cite{anae} acknowledges the failure of traditional moderation methods in ensuring productive conversation on forum posts and threads. The article explores changes to traditional moderation systems, and puts forth the idea of evaluating conversations in threads as an indicator of engagement within the online community, instead of just looking at comments.
+
+While several interesting research questions were proposed, due to deadline constraints, we will only look at the following problem.
 
 \subsubsection*{Research problem}
 
+The core question follows: {\it Is it possible to predict how a conversation thread will turn out, based on the first few conversations between users, using a two comment dyad or more?}
+
+Here, we will first look at seeing if it is possible to predict the number of comments a particular thread receives based on the first few posts, as well as how productive a thread could be.
+
+Our analysis will be done using data from BC3's blog corpus, in particular the Slashdot blog conversations.
 %modify and expound on forum - use LL's 1a) / 1b)
 
 \subsubsection*{Proposed techniques}
 
-%include techniques from reading here
-%graphs discussed today
+We looked at several papers given by Professor Lee, notably \cite{Backstrom+al:13a} and 
+
+
+
+As we are using data from Slashdot conversations, the techniques in these papers may not be directly applicable, but we will see if we can build on the ideas.
+
+For example, \cite{Backstrom+al:13a} looks at data from Facebook and Wikipedia pages, but one of the core metrics the paper uses is the ``links" between users\footnote{For Facebook, a link exists between two users who are Facebook friends, and for Wikipedia, a link exists between two editors if one posts or comments on another editor's talk page.}. We cannot necessarily know if any two posters on Slashdot have a link with each other. 
+
+We will start from scratch, doing exploratory data analysis, and look at several metrics such as:
+\vspace*{-0.5cm}
+\begin{enumerate}
+\item Sentiments in text, by using {\tt textblob} in Python. While it is true that there are moderator labels on the posts, the majority of posts are unclassified, as the following output from Python shows.
+\begin{verbatim}
+{'Troll': 14932, 'Funny': 40672, 'None': 464104, 'Flamebait': 7456, 
+'Redundant': 4792, 'Offtopic': 11384, 'Informativ': 40188, 'Interestin': 
+50168, 'Insightful': 73864}
+\end{verbatim}
+\item Number of posts per user.
+\item Length of post by words, sentences, and characters.
+\item Time between posts.
+\end{enumerate}
+amongst others.
+
 
 \subsubsection*{Processing and selection of data}
+
+While it might seem tempting to focus on a subset of data which has mostly been classified by a moderator, it appears that for all threads, the dominating post is classified as {\tt None}. 
 
 %meantime slashdot
 
 %python
 
 %graphs discussed today
+
+% LOTS OF NONE
 
 \subsubsection*{Preliminary results}
 
@@ -88,6 +122,8 @@
 \subsubsection*{Roles played}
 
 
+\clearpage
+
 \bibliographystyle{alpha}	
 \bibliography{database}  % expects file "database.bib"
 \end{document}
@@ -95,6 +131,6 @@
 
 
 
-
-
+http://www.kuro5hin.org/story/2009/3/12/33338/3000
+September 1st 2014
 
