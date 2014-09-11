@@ -25,12 +25,9 @@ def plotThreads(threads):
         
     
 
-def loadData():
-    import pickle;
-    return pickle.load(open("Data/processedData.p","rb"));
 
 if __name__ == "__main__":
     #threads = projectUtil.extractHTML();
-    threads = loadData();
+    threads = projectUtil.loadData();
     print "Finished Loading Data"
-    getLengthMatrix(threads)
+    plotThreads(threads)

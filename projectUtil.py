@@ -131,6 +131,10 @@ def mergeDicts(d1, d2):
             combinedDict[key] += d2[key];
     return combinedDict;
 
+def loadData():
+    import pickle;
+    return pickle.load(open("Data/processedData.p","rb"));
+
 if __name__ == "__main__":
     dicts = extractHTML();
     print "The number of threads processed:\t" + str(len(dicts))
