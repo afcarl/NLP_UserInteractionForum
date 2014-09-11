@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import re
 import projectUtil
 
-def getLengthMatrix(threads):
+def plotThreads(threads):
     #textLentghs = np.array((len(dicts), 1000));
     for thread in threads:
         numReps = len(thread);
