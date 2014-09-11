@@ -1,7 +1,8 @@
 testPlot.py
 *.pyc
 *.DS_Store
-/Data/*
+/Data/foods.txt
+/Data/Slashdot/*
 *.aux
 *.idx
 *.log

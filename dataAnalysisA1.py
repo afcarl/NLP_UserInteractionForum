@@ -32,5 +32,5 @@ def loadData():
 if __name__ == "__main__":
     #threads = projectUtil.extractHTML();
     threads = loadData();
-    #print threads
+    print "Finished Loading Data"
     getLengthMatrix(threads)
