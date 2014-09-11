@@ -1,11 +1,16 @@
 testPlot.py
 *.pyc
 *.DS_Store
-/Data/*
+/Data/foods.txt
+/Data/Slashdot/*
 *.aux
 *.idx
 *.log
 *.out
 *.synctex.gz
+<<<<<<< HEAD
 *.bbl
 *.blg
+=======
+temp/*
+>>>>>>> FETCH_HEAD

@@ -9,6 +9,19 @@ except ImportError:
 import re
 import operator
 
+def uta(a):
+    return a;
+
+# will discard
+def utaa(uString):
+    from bs4 import BeautifulSoup
+    print uString
+    print type(uString)
+    soup = BeautifulSoup(uString); 
+    newUString = ''.join(soup.findAll(text=True));
+    import unicodedata
+    return unicodedata.normalize('NFKD', newUString).encode('ascii','ignore');
+
 def extract_tree_data(direc="Data/Slashdot/slashdot_part_1"):
     for datafile in os.listdir(direc):
         if(datafile == ".DS_Store"):
@@ -20,6 +33,58 @@ def extract_tree_data(direc="Data/Slashdot/slashdot_part_1"):
         # take a look at the structure later
         break;
 
+# This method is only used once to load data and save it into a pickle file
+def extractHTML(direcs=["Data/Slashdot/slashdot_part_1","Data/Slashdot/slashdot_part_1"]):
+    from bs4 import BeautifulSoup
+    dicts = [];
+    for direc in direcs:
+        ## DEBUG
+        i = 1;
+        for datafile in os.listdir(direc):
+            if(datafile == ".DS_Store"):
+                continue;
+            filepath = os.path.join(direc, datafile);
+            soup = BeautifulSoup(open(filepath));
+            print "Processing File:\t" + datafile;
+            fileSequence = [];
+            for el in soup.find_all("article"):
+                d = {};
+                d['title'] = uta(el.find("title").renderContents());
+                d['author'] = uta(el.find("author").renderContents());
+                d['datestamp'] = uta(el.find("datestamp").renderContents());
+                # prefer sentencetext to htmltext
+                # but use htmltext if sentencetext does not exist
+                t = el.find("sentencetext");
+                if t is not None and len(t.renderContents()) > 0:
+                    text = t.renderContents()
+                else:
+                    text = el.find("htmltext").renderContents()
+                d['textLen'] = len(text);
+                d['type'] = "article"
+                fileSequence.append(d);
+            for el in soup.find_all("comment"):
+                #print el
+                d = {};
+                d['title'] = uta(el.find("title").renderContents())
+                d['author'] = uta(el.find("author").renderContents())
+                d['datestamp'] = uta(el.find("datestamp").renderContents())
+                d['modclass'] = uta(el.find("modclass").renderContents())
+                d['modscore'] = uta(el.find("modscore").renderContents())
+                # prefer sentencetext to htmltext
+                # but use htmltext if sentencetext does not exist
+                t = el.find("sentencetext");
+                if t is not None and len(t.renderContents()) > 0:
+                    text = t.renderContents()[0]
+                else:
+                    text = el.find("htmltext").renderContents()
+                d['textLen'] = len(text);
+                d['type'] = "comment"
+                
+                fileSequence.append(d);
+            dicts.append(fileSequence);
+    import pickle
+    pickle.dump(dicts, open("Data/processedData.p", "wb"))
+    return dicts                    
 
 def aggregateClassFrequency(folders=["Data/Slashdot/slashdot_part_1","Data/Slashdot/slashdot_part_1"]):
     theDict = {};
@@ -30,12 +95,7 @@ def aggregateClassFrequency(folders=["Data/Slashdot/slashdot_part_1","Data/Slash
                 continue;
             fileDict = fileClassFrequency(os.path.join(folder,datafile));
             domClass = max(dict(fileDict.items() + {'None':-1000000000}.items()).iteritems(), key=operator.itemgetter(1))[0]
-            #print "Before"
-            #print domClass
-            #print dominatingClassDict
             dominatingClassDict = mergeDicts(dominatingClassDict, {domClass:1});
-            #print "After"
-            #print dominatingClassDict
             theDict = mergeDicts(theDict, fileDict);
             
     return [theDict, dominatingClassDict];
@@ -71,7 +131,7 @@ def mergeDicts(d1, d2):
             combinedDict[key] += d2[key];
     return combinedDict;
 
-
-
 if __name__ == "__main__":
-    extract_tree_data()
+    dicts = extractHTML();
+    print "The number of threads processed:\t" + str(len(dicts))
+    
