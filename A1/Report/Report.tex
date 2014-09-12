@@ -58,50 +58,70 @@
 
 \subsubsection*{Introduction}
 
-Many goals in NLP focus on analyzing a chunk of text, and making some sort of prediction or identification from it. In the CS742 course, we were given two articles \cite{dejareview} and \cite{anae} to read, and come up with interesting research proposals. 
+Many goals in NLP focus on analyzing a chunk of text, and making some sort of prediction or identification about it. In the CS742 course, we were given two articles \cite{dejareview} and \cite{anae} to read, and come up with interesting research proposals. 
 
 \cite{anae} acknowledges the failure of traditional moderation methods in ensuring productive conversation on forum posts and threads. The article explores changes to traditional moderation systems, and puts forth the idea of evaluating conversations in threads as an indicator of engagement within the online community, instead of just looking at comments.
 
-While several interesting research questions were proposed, due to deadline constraints, we will only look at the following problem.
+While several interesting research questions were proposed, we will only look at the following problem.
 
 \subsubsection*{Research problem}
 
-The core question follows: {\it Is it possible to predict how a conversation thread will turn out, based on the first few conversations between users, using a two comment dyad or more?}
+The problem is stated as such: {\it Can we predict the dynamics of any two active users, based on their previous posts?}
 
-Here, we will first look at seeing if it is possible to predict the number of comments a particular thread receives based on the first few posts, as well as how productive a thread could be.
-
-Our analysis will be done using data from BC3's blog corpus, in particular the Slashdot blog conversations.
-%modify and expound on forum - use LL's 1a) / 1b)
-
-\subsubsection*{Proposed techniques}
-
-We looked at several papers given by Professor Lee, notably \cite{Backstrom+al:13a} and 
-
-
-
-As we are using data from Slashdot conversations, the techniques in these papers may not be directly applicable, but we will see if we can build on the ideas.
-
-For example, \cite{Backstrom+al:13a} looks at data from Facebook and Wikipedia pages, but one of the core metrics the paper uses is the ``links" between users\footnote{For Facebook, a link exists between two users who are Facebook friends, and for Wikipedia, a link exists between two editors if one posts or comments on another editor's talk page.}. We cannot necessarily know if any two posters on Slashdot have a link with each other. 
-
-We will start from scratch, doing exploratory data analysis, and look at several metrics such as:
+Our analysis will be done using data from BC3's blog corpus, in particular the Slashdot blog conversations. Using this data, we would like to answer the following questions:
 \vspace*{-0.5cm}
 \begin{enumerate}
-\item Sentiments in text, by using {\tt textblob} in Python. While it is true that there are moderator labels on the posts, the majority of posts are unclassified, as the following output from Python shows.
-\begin{verbatim}
-{'Troll': 14932, 'Funny': 40672, 'None': 464104, 'Flamebait': 7456, 
-'Redundant': 4792, 'Offtopic': 11384, 'Informativ': 40188, 'Interestin': 
-50168, 'Insightful': 73864}
-\end{verbatim}
-\item Number of posts per user.
-\item Length of post by words, sentences, and characters.
-\item Time between posts.
+\item We would like to know if we can predict the length of a thread, given two particular users drawn from the top $k$ posters\footnote{Here, the top $k$ posters refer to users with the top $k$ number of posts.}. 
+\item Given the probability vector ${\bf p}_A = ({p_1}_A, {p_2}_A,\hdots, {p_n}_A)$ for any user $A$ to create posts of quality $1,2,\hdots, n$, we would like to estimate the conditional probability vector ${\bf p}_{A|\mathcal E}$ of user $A$, given that some event $\mathcal E$ has occurred. Here, $\mathcal E$ could be a shift in topic of the thread, or the entry of a new user.
 \end{enumerate}
-amongst others.
+both which fall under the umbrella of our research problem.
+
+%Here, we will first look at seeing if it is possible to predict the number of comments a particular thread receives based on the first few posts, as well as how productive a thread could be.
 
 
-\subsubsection*{Processing and selection of data}
+%modify and expound on forum - use LL's 1a) / 1b)
 
-While it might seem tempting to focus on a subset of data which has mostly been classified by a moderator, it appears that for all threads, the dominating post is classified as {\tt None}. 
+\subsubsection*{Proposed techniques and processing and selection of data}
+
+While the Slashdot data has comments with a moderator score and a category, exploratory data analysis shows that the majority of categories are labelled as {\tt None}. Furthermore, all of these instances have {\tt None} as the dominating category, so we cannot pick a sub-sample of instances to do our analysis on. 
+
+Therefore, we will need to find a way to categorize the {\tt None} comments. One idea of ours is to compute several metrics, such as those in the handout \cite{Otterbacher}\footnote{While these metrics refer to reviews in particular, we will consider metrics 8-17.}, from all the comments. We then see if we can utilize a classification algorithm, such as the $k$-nearest neighbors to classify the other {\tt None:} comments.
+
+\cite{Backstrom+al:13a} also proposes a metric based on whether two users are connected to each other\footnote{This study looks at Facebook and Wikipedia editors. Facebook users are connected if they are mutual friends, and Wikipedia editors are connected if one an editor posted on another editor's page.}. Although there is nothing similar to that for the Slashdot data, we propose a metric of the following: We take a look at the datestamps of the posts of any two particular users, and construct an interval around each datestamp, and assume that this is a user's available time online. We take the ratio of the intersection of two users' available time to their total time to be a metric\footnote{For example, if user $a$ has the time intervals $T_1 \cup T_2 \cup \hdots \cup T_n = A$, and user $b$ has the time intervals $T'_1, \cup T'_2 \cup \hdots \cup T'_m = B$, we would look at the ratio $\frac{A \cap B}{A \cup B}$. }. 
+
+We hope that we can use these metrics to eventually classify the rest of the {\tt None} posts. Then, we can then look at the empirical probability and conditional probability, and do more analysis of the data.
+
+Ideally, we would like to use the entire Slashdot blog corpus and split it into a testing and training set, but it is highly possible that some comments will be hard to classify, and we might have to discard them.
+
+
+%\cite{Backstrom+al:13a} and 
+
+
+%As we are using data from Slashdot conversations, the techniques in these papers may not be directly applicable, but we will see if we can build on the ideas.
+
+%For example, \cite{Backstrom+al:13a} looks at data from Facebook and Wikipedia pages, but one of the core metrics the paper uses is the ``links" between users\footnote{For Facebook, a link exists between two users who are Facebook friends, and for Wikipedia, a link exists between two editors if one posts or comments on another editor's talk page.}. We cannot necessarily know if any two posters on Slashdot have a link with each other. 
+
+%We will start from scratch, doing exploratory data analysis, and look at several metrics such as:
+%\vspace*{-0.5cm}
+%\begin{enumerate}
+%\item Sentiments in text, by using {\tt textblob} in Python. While it is true that there are moderator labels on the posts, the majority of posts are unclassified, as the following output from Python shows.
+%\begin{verbatim}
+%{'Troll': 14932, 'Funny': 40672, 'None': 464104, 'Flamebait': 7456, 
+%'Redundant': 4792, 'Offtopic': 11384, 'Informativ': 40188, 'Interestin': 
+%50168, 'Insightful': 73864}
+%%\end{verbatim}
+%\item Number of posts per user.
+%\item Length of post by words, sentences, and characters.
+%\item Time between posts.
+%\end{enumerate}
+%amongst others.
+
+
+%\subsubsection*{Processing and selection of data}
+
+
+
+%While it might seem tempting to focus on a subset of data which has mostly been classified by a moderator, it appears that for all threads, the dominating post is classified as {\tt None}. 
 
 %meantime slashdot
 
@@ -113,14 +133,39 @@ While it might seem tempting to focus on a subset of data which has mostly been 
 
 \subsubsection*{Preliminary results}
 
-%graphs discussed today
+The breakdown of the classification of comments are as follows:
+\vspace*{-0.5cm}
+\begin{verbatim}
+{'Troll': 14932, 'Funny': 40672, 'None': 464104, 'Flamebait': 7456, 
+'Redundant': 4792, 'Offtopic': 11384, 'Informativ': 40188, 'Interestin': 
+50168, 'Insightful': 73864}
+\end{verbatim}
+which really necessitates looking at the {\tt None:} posts and classifying them. 
+
+One interesting preliminary result however, came from the metric of post length, and we look at the top 25 posters. We made plots of each user's post length and the conditional distribution of their post length when another user is in the same thread. Here is an example of these plots.
+
+\begin{figure}[here!]
+\begin{center}
+\includegraphics[width=17cm]{histeg.png}
+\caption{Conditional Histograms for user {\tt pclminion}}
+\end{center}
+\end{figure}
+
+Here, the $y$ axis denotes the square root of the number of characters in a post, and the $x$ axis denotes the number of threads where that occurs.
+
+{\tt pclminion}'s plot of post length is the second from the top, while the other plots are of {\tt pclminion}'s post length conditional on the other users. We can see that the conditional plots do not follow the same distribution as {\tt pclminion}, which supports the stance that as a different user enters the post, the distribution of posts of a user changes.
 
 \subsubsection*{What we learnt}
 
-%me..python, github, eclipse, ...
+We have learnt that cleaning up of data takes a bit more time than expected. 
+
+I (Keegan) have also, learnt quite a fair bit of Python from Ben, as we have used Python exclusively. 
+
 
 \subsubsection*{Roles played}
 
+Keegan - Wrote report with Ben.  \\
+Ben - Super Duper Code expert and Python debugger. Wrote report with Keegan.
 
 \clearpage
 
