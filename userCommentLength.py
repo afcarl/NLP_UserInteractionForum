@@ -91,6 +91,7 @@ def loadMostActiveUsers(numUsers= -1):
 
 def main():
     ts = projectUtil.loadData();
+    getMostActiveUsers(ts)
     # First: find 100 most active users (counting the number of comments)
     #mostActiveUsers = getMostActiveUsers(ts,10);
     #print mostActiveUsers;
