@@ -3,6 +3,7 @@ testPlot.py
 *.DS_Store
 /Data/foods.txt
 /Data/Slashdot/*
+/Data/*
 *.aux
 *.idx
 *.log
@@ -11,5 +12,3 @@ testPlot.py
 *.bbl
 *.blg
 temp/*
-sortedUsersNumComments.p
-userTextLenHistogram.p
