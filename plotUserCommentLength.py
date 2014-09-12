@@ -49,4 +49,4 @@ def plotCondHists(numFriends):
 
 if __name__ == "__main__":
     #plotHists();
-    plotCondHists(25);
+    plotCondHists(16);
