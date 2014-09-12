@@ -79,7 +79,7 @@ Our analysis will be done using data from BC3's blog corpus, in particular the S
 \begin{enumerate}
 %\item We would like to know if we can predict the length of a thread, given two particular users drawn from the top $k$ posters\footnote{Here, the top $k$ posters refer to users with the top $k$ number of posts.}.
 \item We would like to know if we can predict the trend of a thread, given the earliest $k$ comments in the article. The trend here can be the length, a moderation class, the moderation score, or some derived feature based on the text such as aggressiveness. 
-\item Given the probability vector ${\bf p}_A = ({p_1}_A, {p_2}_A,\hdots, {p_n}_A)$ for any user $A$ to create posts of quality $1,2,\hdots, n$, we would like to estimate the conditional probability vector ${\bf p}_{A|\mathcal E}$ of user $A$, given that some event $\mathcal E$ has occurred. Here, $\mathcal E$ could be a shift in topic of the thread, or the entry of a new user.
+\item Given the probability distribution ${\bf p}_A = ({p_1}_A, {p_2}_A,\hdots, {p_n}_A)$ for any user $A$ to create posts of quality $1,2,\hdots, n$, we would like to estimate the conditional probability vector ${\bf p}_{A|\mathcal E}$ of user $A$, given that some event $\mathcal E$ has occurred. Here, $\mathcal E$ could be a shift in topic of the thread, or the entry of a new user.
 \end{enumerate}
 %Both questions which fall under the umbrella of our research problem.
 
@@ -90,14 +90,9 @@ Our analysis will be done using data from BC3's blog corpus, in particular the S
 
 \subsubsection*{Proposed techniques and processing and selection of data}
 \begin{enumerate}
-\item We begin addressing research question 1. by analyzing the comment lengths and moderation scores in a thread. For this preliminary analysis, we represent a thread as a collection of all comments sorted chronologically. An alternative could be to represent a single thread as a path from root to leaf. 
+\item We address research question 1. by analyzing the comment lengths and moderation scores in a thread. For this preliminary analysis, we represent a thread as a collection of all comments sorted chronologically. An alternative could be to represent a single thread as a path from root to leaf. 
 
-
-
-
-
-
-\item 
+\item To address research question 2, we consider the distribution of the comment length for a given user and compare it with the conditional distribution of comment length of the same user conditioned that another user is also "present" in the thread. 
 \end{enumerate}
 
 
@@ -149,6 +144,12 @@ Ideally, we would like to use the entire Slashdot blog corpus and split it into 
 % LOTS OF NONE
 
 \subsubsection*{Preliminary results}
+Below is a plot of comment length (string length) for an article ()
+
+
+
+
+
 
 While the Slashdot data has comments with a moderator score and a category, exploratory data analysis shows that the majority of categories are labelled as {\tt None}. However, we analyze preliminary results to see if there are any trends in moderation score.
 
@@ -178,7 +179,7 @@ One interesting preliminary result however, came from the metric of post length,
 \end{center}
 \end{figure}
 
-Here, the $x$ axis denotes the square root of the number of characters in a post, and the $y$ axis denotes the number of threads where that occurs.
+Here, the $x$ axis denotes the square root of the number of characters in a post (we do this to scale down very long comment), and the $y$ axis denotes the number of threads for a given square root of comment length. The bin size for this histogram is $2$.
 
 %We can see t
 
@@ -187,12 +188,18 @@ Here, the $x$ axis denotes the square root of the number of characters in a post
 %We have learnt that cleaning up of data takes a bit more time than expected. 
 
 %I (Keegan) have also, learnt quite a fair bit of Python from Ben, as we have used Python exclusively. 
-Based on the conditional/joint distributions, we can see that users make differing lengths of posts depending on which particular user is in the conversation. However, this is for a small subset, and we want to see if this has any significance in a bigger set of data. 
+\begin{itemize}
+\item 
+\item Based on the conditional/joint distributions, we can see that users make differing lengths of posts depending on which particular user is in the conversation. However, this is for a small subset, and we want to see if this has any significance in a bigger set of data. 
+\item A method to numerically compare the distribution to the conditional distribution will be very helpful. Chi square computation which we have not done is a good metric but we will need a larger dataset to see if there is any real pattern. 
+\end{itemize}
+
+
 
 \subsubsection*{Roles played}
 
-Keegan - Wrote report with Ben.  \\
-Ben - Super Duper Code expert and Python debugger. Wrote report with Keegan.
+Keegan - Analyzed data and co-author the report.  \\
+Ben - Wrote code to do the plots and co-author the report.
 
 \clearpage
 
