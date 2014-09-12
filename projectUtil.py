@@ -49,12 +49,13 @@ def extractHTML(direcs=["Data/Slashdot/slashdot_part_1","Data/Slashdot/slashdot_
             fileSequence = [];
             for el in soup.find_all("article"):
                 d = {};
+                d['id'] = uta(el.find("id").renderContents())
                 d['title'] = uta(el.find("title").renderContents());
                 d['author'] = uta(el.find("author").renderContents());
                 d['datestamp'] = uta(el.find("datestamp").renderContents());
                 # prefer sentencetext to htmltext
                 # but use htmltext if sentencetext does not exist
-                t = el.find("sentencetext");
+                t = el.find("htmltext");
                 if t is not None and len(t.renderContents()) > 0:
                     text = t.renderContents()
                 else:
@@ -65,6 +66,7 @@ def extractHTML(direcs=["Data/Slashdot/slashdot_part_1","Data/Slashdot/slashdot_
             for el in soup.find_all("comment"):
                 #print el
                 d = {};
+                d['id'] = uta(el.find("id").renderContents())
                 d['title'] = uta(el.find("title").renderContents())
                 d['author'] = uta(el.find("author").renderContents())
                 d['datestamp'] = uta(el.find("datestamp").renderContents())
@@ -72,12 +74,14 @@ def extractHTML(direcs=["Data/Slashdot/slashdot_part_1","Data/Slashdot/slashdot_
                 d['modscore'] = uta(el.find("modscore").renderContents())
                 # prefer sentencetext to htmltext
                 # but use htmltext if sentencetext does not exist
-                t = el.find("sentencetext");
+                t = el.find("htmltext");
                 if t is not None and len(t.renderContents()) > 0:
-                    text = t.renderContents()[0]
+                    text = t.renderContents()
                 else:
                     text = el.find("htmltext").renderContents()
                 d['textLen'] = len(text);
+                if(len(text) < 2):
+                    print text;
                 d['type'] = "comment"
                 
                 fileSequence.append(d);
@@ -134,6 +138,10 @@ def mergeDicts(d1, d2):
 def loadData():
     import pickle;
     return pickle.load(open("Data/processedData.p","rb"));
+
+def loadFullTextData():
+    import pickle;
+    return pickle.load(open("Data/processedFullTextData.p","rb"));
 
 if __name__ == "__main__":
     dicts = extractHTML();

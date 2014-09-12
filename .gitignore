@@ -8,9 +8,8 @@ testPlot.py
 *.log
 *.out
 *.synctex.gz
-<<<<<<< HEAD
 *.bbl
 *.blg
-=======
 temp/*
->>>>>>> FETCH_HEAD
+sortedUsersNumComments.p
+userTextLenHistogram.p
