@@ -78,7 +78,7 @@ Our analysis will be done using data from BC3's blog corpus, in particular the S
 \vspace*{-0.5cm}
 \begin{enumerate}
 %\item We would like to know if we can predict the length of a thread, given two particular users drawn from the top $k$ posters\footnote{Here, the top $k$ posters refer to users with the top $k$ number of posts.}.
-\item We would like to know if we can predict the trend of a thread, given the earliest $k$ comments in the article. The trend here can be the length, a moderation class, the moderation score, or some derived feature based on the text such as aggressiveness. 
+\item We would like to know if we can predict the trend of a thread, given the earliest $k$ comments in the article. The trend here can be the length, a moderation class, the moderation score, or some derived feature based on the text such as aggressiveness, politeness, etc. 
 \item Given the probability distribution ${\bf p}_A = ({p_1}_A, {p_2}_A,\hdots, {p_n}_A)$ for any user $A$ to create posts of quality $1,2,\hdots, n$, we would like to estimate the conditional probability vector ${\bf p}_{A|\mathcal E}$ of user $A$, given that some event $\mathcal E$ has occurred. Here, $\mathcal E$ could be a shift in topic of the thread, or the entry of a new user.
 \end{enumerate}
 %Both questions which fall under the umbrella of our research problem.
@@ -90,9 +90,11 @@ Our analysis will be done using data from BC3's blog corpus, in particular the S
 
 \subsubsection*{Proposed techniques and processing and selection of data}
 \begin{enumerate}
-\item We address research question 1. by analyzing the comment lengths and moderation scores in a thread. For this preliminary analysis, we represent a thread as a collection of all comments sorted chronologically. An alternative could be to represent a single thread as a path from root to leaf. 
+\item We analyze the data to prepare for research question 1 by looking at the frequencies of moderation classes. 
 
-\item To address research question 2, we consider the distribution of the comment length for a given user and compare it with the conditional distribution of comment length of the same user conditioned that another user is also "present" in the thread. 
+\item We plot the comment length in each thread to see if there are any discernible patterns. We represent a thread as a collection of all comments sorted chronologically. An alternative could be to represent a single thread as a path from root to leaf. 
+
+\item To address research question 2, we consider the distribution of the comment length for a given user and compare it with the conditional distribution of comment length of the same user conditioned that another user having posted at least once in the thread. 
 \end{enumerate}
 
 
@@ -144,16 +146,8 @@ Ideally, we would like to use the entire Slashdot blog corpus and split it into 
 % LOTS OF NONE
 
 \subsubsection*{Preliminary results}
-Below is a plot of comment length (string length) for an article ()
 
-
-
-
-
-
-While the Slashdot data has comments with a moderator score and a category, exploratory data analysis shows that the majority of categories are labelled as {\tt None}. However, we analyze preliminary results to see if there are any trends in moderation score.
-
-
+While the Slashdot data has comments with a moderator score and a category, exploratory data analysis shows that the majority of categories are labelled as {\tt None} with the moderator score default to $0$. 
 The breakdown of the classification of comments are as follows:
 \vspace*{-0.5cm}
 \begin{verbatim}
@@ -161,9 +155,32 @@ The breakdown of the classification of comments are as follows:
 'Redundant': 4792, 'Offtopic': 11384, 'Informativ': 40188, 'Interestin': 
 50168, 'Insightful': 73864}
 \end{verbatim}
-which really necessitates looking at the {\tt None:} posts and classifying them. 
+In addition, the most frequent moderation class, which we'll call the dominating class, for each thread is also {\tt None }. If we are to disregard {\tt None}, the dominating class is distributed as follows:
 
-One interesting preliminary result however, came from the metric of post length, and we look at the top 25 posters. We made plots of each user's post length and the conditional distribution of their post length when another user is in the same thread. There are several examples of these plots on subsequent pages.
+\vspace*{-0.5cm}
+\begin{verbatim}
+{'Flamebait': 28, 'Funny': 2316, 'Redundant': 8, 'Troll': 136, 
+'Offtopic': 68, 'Insightful': 5540, 'Interestin': 1824, 'Informativ': 1348}
+\end{verbatim}
+
+We could potentially try to classify the comments with class {\tt None} as well as predict the score. However, we consider comment length which is one of the indicator for the trend of the thread.
+
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[scale=0.50]{CL_conferencePlagiarism.png}
+\caption{Post Length for Article {\tt Conference Board Admits Plagiarism, Pulls Copyright Report}}
+
+\includegraphics[scale=0.50]{CL_GooglesWave.png}
+\caption{Post Length for Article {\tt Google's "Wave" Blurs Chat, Email, Collaboration Software}}
+\end{center}
+\end{figure}
+
+
+
+
+
+One interesting preliminary result however, came from the metric of post length, and we look at the top 16 posters. We made plots of each user's post length and the conditional distribution of their post length when another user is in the same thread. There are several examples of these plots on subsequent pages.
 
 \begin{figure}[here!]
 \begin{center}
@@ -175,7 +192,7 @@ One interesting preliminary result however, came from the metric of post length,
 \begin{figure}[here!]
 \begin{center}
 \includegraphics[angle = 90, scale=0.46]{mcrbids.png}
-\caption{Conditional Plots for user {\tt mcrbids}}
+\caption{Joint Distribution Plots for user {\tt mcrbids} and Other Active User}
 \end{center}
 \end{figure}
 
@@ -189,7 +206,8 @@ Here, the $x$ axis denotes the square root of the number of characters in a post
 
 %I (Keegan) have also, learnt quite a fair bit of Python from Ben, as we have used Python exclusively. 
 \begin{itemize}
-\item 
+%\item 
+\item The comment length patterns differ significantly on the article. The next action item would be to learn the estimator based on a training sample. The features for this learning problem can be the length itself but can also be the content of the original post + first few comments.
 \item Based on the conditional/joint distributions, we can see that users make differing lengths of posts depending on which particular user is in the conversation. However, this is for a small subset, and we want to see if this has any significance in a bigger set of data. 
 \item A method to numerically compare the distribution to the conditional distribution will be very helpful. Chi square computation which we have not done is a good metric but we will need a larger dataset to see if there is any real pattern. 
 \end{itemize}

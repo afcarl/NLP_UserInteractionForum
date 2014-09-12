@@ -19,8 +19,8 @@ def plotThreads(threads):
         
         plt.figure();
         #plt.plot(range(numReps), timeStamp);
-        #plt.plot(range(numReps), length_array);
-        plt.plot(range(numReps), modscore_array);
+        plt.plot(range(numReps), length_array);
+        #plt.plot(range(numReps), modscore_array);
         plt.show();
         
     
