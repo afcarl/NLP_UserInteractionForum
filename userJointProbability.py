@@ -34,6 +34,21 @@ def constructCategory(ts):
             else:
                 userCategory[(comment['author'],comment['modclass'])] += 1
     pickle.dump(userCategory, open('Data/sortedUsersCategory.p','wb'))
+    
+def constructJointCategory(ts):
+    print "Constructing Category"
+    userCategory = {};
+    for thread in ts:
+        for comment in thread:
+            print "."
+            if 'modclass' not in comment:
+                continue;            
+            key = (comment['author'], otherUser, comment['modclass'])
+            if not key in userCategory:
+                userCategory[key] = 1
+            else:
+                userCategory[key] += 1
+    pickle.dump(userCategory, open('Data/sortedUsersCategory.p','wb'))
 
 def findInsightful(userCategory):
     print "Finding Insightful"
