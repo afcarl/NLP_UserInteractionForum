@@ -42,59 +42,63 @@ def constructCategory(ts):
     
 def constructJointCategory(ts):
     print "Constructing Category"
-    userJointCategory = {};
-    userTotalCategory = {};
+    userJointFreqInsightful = {};
+    userJointFreqAllClass = {};
     cats = {'Troll': 14932, 'Funny': 40672, 'None': 464104, 'Flamebait': 7456, 
             'Redundant': 4792, 'Offtopic': 11384, 'Informativ': 40188, 'Interestin': 50168, 
             'Insightful': 73864}
     for thread in ts:
-        uniqueUsers = {};
-        userCategory = {};
+        usersInThread = {};
+        userClassFrequency = {};
         #first loop and get all the unique users, plus num insightful
         for comment in thread:
             if 'author' not in comment:
                 continue; 
-            if not (comment['author']) in uniqueUsers:
-                uniqueUsers[comment['author']] = 1
+            # add comment['author'] to usersInThread
+            if not (comment['author']) in usersInThread:
+                usersInThread[comment['author']] = 1
+            
             if 'modclass' not in comment:
                 continue;            
-            if not (comment['author'],comment['modclass']) in userCategory:
-                userCategory[(comment['author'],comment['modclass'])] = 1
+            if not (comment['author'],comment['modclass']) in userClassFrequency:
+                userClassFrequency[(comment['author'],comment['modclass'])] = 1
             else:
-                userCategory[(comment['author'],comment['modclass'])] += 1                
-        #now use uniqueUsers and userCategory to create key
-        for userName1 in uniqueUsers:
-            for userName2 in uniqueUsers:
-                #ask ben how to find insightful posts for userName1 from userCategory
-                #then can do key
-                
-                if not (userName1,'Insightful') in userCategory:
+                userClassFrequency[(comment['author'],comment['modclass'])] += 1                
+        #now use usersInThread and userClassFrequency to create key
+        #Construct userJointFreqInsightful
+        #Construct userJointFreqAllClass
+        for userName1 in usersInThread:
+            for userName2 in usersInThread:     
+                # Insightful Frequency
+                if not (userName1,'Insightful') in userClassFrequency:
                     continue;
-                if not (userName1 , userName2) in userJointCategory:
-                    userJointCategory[(userName1, userName2)] = userCategory[(userName1,'Insightful')]
+                elif not (userName1 , userName2) in userJointFreqInsightful:
+                    userJointFreqInsightful[(userName1, userName2)] = userClassFrequency[(userName1,'Insightful')]
                 else:
-                    userJointCategory[(userName1, userName2)] += userCategory[(userName1,'Insightful')]
+                    userJointFreqInsightful[(userName1, userName2)] += userClassFrequency[(userName1,'Insightful')]
+                # userName1 and userName2 are botn in thread
                 
+                # Total Frequencies
                 for cat in cats:
-                    if (userName1, cat) not in userCategory:
+                    if (userName1, cat) not in userClassFrequency:
                         continue;
-                    if not (userName1, userName2) in userTotalCategory:
-                        userTotalCategory[(userName1, userName2)] = userCategory[(userName1, cat)]
+                    if not (userName1, userName2) in userJointFreqAllClass:
+                        userJointFreqAllClass[(userName1, userName2)] = userClassFrequency[(userName1, cat)]
                     else:
-                        userTotalCategory[(userName1, userName2)] += userCategory[(userName1, cat)]
+                        userJointFreqAllClass[(userName1, userName2)] += userClassFrequency[(userName1, cat)]
                 
-    #pickle.dump(userJointCategory, open('Data/sortedUsersJointCategory.p','wb'))
-    pickle.dump(userTotalCategory, open('Data/sortedUsersTotalCategory.p','wb'))
+    #pickle.dump(userJointFreqInsightful, open('Data/sortedUsersJointCategory.p','wb'))
+    pickle.dump(userJointFreqAllClass, open('Data/sortedUsersTotalCategory.p','wb'))
     print "test1"
-    for key in userJointCategory:
-        userJointCategory[key] /= userTotalCategory[key]
-    pickle.dump(userJointCategory, open('Data/sortedUsersJointProbInsightful.p','wb'))  
+    for key in userJointFreqInsightful:
+        userJointFreqInsightful[key] /= userJointFreqAllClass[key]
+    pickle.dump(userJointFreqInsightful, open('Data/sortedUsersJointProbInsightful.p','wb'))  
     
     userThreadProb = findThreadProbability(ts);
     userConditionalProbInsightful = {};
     print "test2"
-    for key in userJointCategory:
-        userConditionalProbInsightful[key] = userJointCategory[key]/(userThreadProb[key[1]]) 
+    for key in userJointFreqInsightful:
+        userConditionalProbInsightful[key] = userJointFreqInsightful[key]/(userThreadProb[key[1]]) 
     pickle.dump(userConditionalProbInsightful, open('Data/sortedUsersConditionalProbInsightful.p','wb'))  
 
 def findThreadProbability(ts):
@@ -150,12 +154,15 @@ def findInsightful(userCategory):
         insightfulDict[user] /= numTotal
     return [insightfulDict, totalDict];
 
-def loadJointCategory():
-    return pickle.load(open('Data/sortedUsersJointCategory.p','rb'))
+
+def loadConditionalProbInsightful():
+    return pickle.load(open('Data/sortedUsersConditionalProbInsightful.p','rb'))
 
 def loadconstructCategory():
     return pickle.load(open('Data/sortedUsersCategory.p','rb'))
 
+def loadThreadProbabilityEachUser():
+    return pickle.load(open('Data/probUserPostInThread.p', 'rb'))
 
 if __name__ == "__main__":
     mainJoint();
