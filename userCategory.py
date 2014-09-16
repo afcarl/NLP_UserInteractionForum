@@ -9,8 +9,8 @@ def main():
     ts = projectUtil.loadData();
     mostActiveUsers = userCommentLength.loadMostActiveUsers(100)
     #constructConditionalHistograms(ts, 25)
-    #constructCategory(ts)
-    userCategory = loadconstructCategory()
+    #constructUserClassFrequency(ts)
+    userCategory = loadUserClassFrequency()
     [userInsightful, numTotalPosts] = findInsightful(userCategory)
     for user in mostActiveUsers:
         print user;
@@ -24,9 +24,14 @@ def mainJoint():
     constructJointCategory(ts)
     #userJointInsightful = loadJointCategory();
     #print(userJointInsightful)
+    findThreadProbability(ts)
+    threadnum = loadTotalThreadNum()
+    print(threadnum)
+    #print(totalThreadNum)
     
     
-def constructCategory(ts):
+    
+def constructUserClassFrequency(ts):
     print "Constructing Category"
     userCategory = {};
     for thread in ts:
@@ -38,12 +43,12 @@ def constructCategory(ts):
                 userCategory[(comment['author'],comment['modclass'])] = 1
             else:
                 userCategory[(comment['author'],comment['modclass'])] += 1
-    pickle.dump(userCategory, open('Data/sortedUsersCategory.p','wb'))
+    pickle.dump(userCategory, open('Data/userClassFrequency.p','wb'))
     
 def constructJointCategory(ts):
     print "Constructing Category"
-    userJointFreqInsightful = {};
-    userJointFreqAllClass = {};
+    userCondFreqInsightful = {};
+    userPairFreqAllClass = {};
     cats = {'Troll': 14932, 'Funny': 40672, 'None': 464104, 'Flamebait': 7456, 
             'Redundant': 4792, 'Offtopic': 11384, 'Informativ': 40188, 'Interestin': 50168, 
             'Insightful': 73864}
@@ -65,41 +70,43 @@ def constructJointCategory(ts):
             else:
                 userClassFrequency[(comment['author'],comment['modclass'])] += 1                
         #now use usersInThread and userClassFrequency to create key
-        #Construct userJointFreqInsightful
-        #Construct userJointFreqAllClass
+        #Construct userCondFreqInsightful
+        #Construct userPairFreqAllClass
         for userName1 in usersInThread:
             for userName2 in usersInThread:     
                 # Insightful Frequency
                 if not (userName1,'Insightful') in userClassFrequency:
-                    continue;
-                elif not (userName1 , userName2) in userJointFreqInsightful:
-                    userJointFreqInsightful[(userName1, userName2)] = userClassFrequency[(userName1,'Insightful')]
+                    pass;
+                elif not (userName1 , userName2) in userCondFreqInsightful:
+                    userCondFreqInsightful[(userName1, userName2)] = userClassFrequency[(userName1,'Insightful')]
+                    print "New Value"
+                    print userCondFreqInsightful[(userName1, userName2)] # debug
                 else:
-                    userJointFreqInsightful[(userName1, userName2)] += userClassFrequency[(userName1,'Insightful')]
+                    userCondFreqInsightful[(userName1, userName2)] += userClassFrequency[(userName1,'Insightful')]
+                    print "Updating"
+                    print userCondFreqInsightful[(userName1, userName2)] # debug
                 # userName1 and userName2 are botn in thread
                 
                 # Total Frequencies
                 for cat in cats:
                     if (userName1, cat) not in userClassFrequency:
-                        continue;
-                    if not (userName1, userName2) in userJointFreqAllClass:
-                        userJointFreqAllClass[(userName1, userName2)] = userClassFrequency[(userName1, cat)]
+                        pass;
+                    elif not (userName1, userName2) in userPairFreqAllClass:
+                        userPairFreqAllClass[(userName1, userName2)] = userClassFrequency[(userName1, cat)]
                     else:
-                        userJointFreqAllClass[(userName1, userName2)] += userClassFrequency[(userName1, cat)]
+                        userPairFreqAllClass[(userName1, userName2)] += userClassFrequency[(userName1, cat)]
                 
-    #pickle.dump(userJointFreqInsightful, open('Data/sortedUsersJointCategory.p','wb'))
-    pickle.dump(userJointFreqAllClass, open('Data/sortedUsersTotalCategory.p','wb'))
+    #pickle.dump(userCondFreqInsightful, open('Data/sortedUsersJointCategory.p','wb'))
+    pickle.dump(userCondFreqInsightful, open('Data/usersConditionalFreqInsightful.p','wb'))  
+    pickle.dump(userPairFreqAllClass, open('Data/userPairFrequencyAllClass.p','wb'))
     print "test1"
-    for key in userJointFreqInsightful:
-        userJointFreqInsightful[key] /= userJointFreqAllClass[key]
-    pickle.dump(userJointFreqInsightful, open('Data/sortedUsersJointProbInsightful.p','wb'))  
+    for key in userCondFreqInsightful:
+        print "Key" + str(key)
+        print userCondFreqInsightful[key]
+        print userPairFreqAllClass[key]
+        userCondFreqInsightful[key] /= userPairFreqAllClass[key]
+    pickle.dump(userCondFreqInsightful, open('Data/usersConditionalProbInsightful.p','wb'))  
     
-    userThreadProb = findThreadProbability(ts);
-    userConditionalProbInsightful = {};
-    print "test2"
-    for key in userJointFreqInsightful:
-        userConditionalProbInsightful[key] = userJointFreqInsightful[key]/(userThreadProb[key[1]]) 
-    pickle.dump(userConditionalProbInsightful, open('Data/sortedUsersConditionalProbInsightful.p','wb'))  
 
 def findThreadProbability(ts):
     print "Finding Probability"
@@ -123,6 +130,7 @@ def findThreadProbability(ts):
     for key in userThreadProb:
         userThreadProb[key] /= totalThreadNum
     pickle.dump(userThreadProb, open("Data/probUserPostInThread.p", "wb"))
+    pickle.dump(totalThreadNum, open("Data/totalthreadnum.p","wb"))           
     return userThreadProb;
 
         
@@ -156,13 +164,22 @@ def findInsightful(userCategory):
 
 
 def loadConditionalProbInsightful():
-    return pickle.load(open('Data/sortedUsersConditionalProbInsightful.p','rb'))
+    return pickle.load(open('Data/usersConditionalProbInsightful.p','rb'))
 
-def loadconstructCategory():
-    return pickle.load(open('Data/sortedUsersCategory.p','rb'))
+def loadUserClassFrequency():
+    return pickle.load(open('Data/userClassFrequency.p','rb'))
 
 def loadThreadProbabilityEachUser():
     return pickle.load(open('Data/probUserPostInThread.p', 'rb'))
+
+def loadUserPairFrequencyAllClass():
+    return pickle.load(open('Data/userPairFrequencyAllClass.p','rb'))
+
+def loadUserPairCondFreqInsightful():
+    return pickle.load(open('Data/usersConditionalFreqInsightful.p','rb'))  
+
+def loadTotalThreadNum():
+    return pickle.load(open('Data/totalthreadnum.p','rb'))
 
 if __name__ == "__main__":
     mainJoint();

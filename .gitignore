@@ -12,3 +12,4 @@ testPlot.py
 *.bbl
 *.blg
 temp/*
+dataAnalysis/
