@@ -13,3 +13,5 @@ testPlot.py
 *.blg
 temp/*
 dataAnalysis/
+*.nav
+*.toc

@@ -22,7 +22,7 @@ def mainJoint():
     ts = projectUtil.loadData();
     mostActiveUsers = userCommentLength.loadMostActiveUsers(100)
     constructJointCategory(ts)
-    #userJointInsightful = loadJointCategory();
+    userJointInsightful = loadJointCategory();
     #print(userJointInsightful)
     findThreadProbability(ts)
     threadnum = loadTotalThreadNum()
