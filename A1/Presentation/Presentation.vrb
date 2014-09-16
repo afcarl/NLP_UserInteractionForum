@@ -1,0 +1,13 @@
+\frametitle{Classification Breakdown}
+
+...and by dominating class (when None is removed)
+\pause
+
+\begin{verbatim}
+{'Flamebait': 28, 'Funny': 2316, 'Redundant': 8,
+'Troll': 136,  'Offtopic': 68, 'Insightful': 5540,
+'Interestin': 1824, 'Informativ': 1348}
+\end{verbatim}
+\pause
+We could potentially try to classify the comments with class {\tt None} with some the tools Python provides.
+
